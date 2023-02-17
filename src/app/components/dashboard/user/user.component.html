@@ -1,0 +1,150 @@
+<div class="row" style="margin-bottom: 7px;margin-top: -8px">
+    <div class="col-sm-12  m-t-10">
+        <h4 class="page-title" style="font-size: 18px;padding-right: 5px; ">Manage users</h4>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body text-center">
+
+                <!-- search -->
+                <div class="row" style="text-align: left;">
+                    <div class="col-lg-4 col-md-4">
+                        <label>Search</label>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-lg-4 col-md-4" style="margin-bottom: 15px;">
+                        <input class="form-control input-sm" type="text" placeholder="Display name"
+                            style="color: white;" [(ngModel)]="commonSearchModel.searchText">
+                    </div>
+                    <div class="col-lg-4 col-md-4" style="margin-bottom: 15px; text-align: left;">
+                        <button type="button" class="btn btn-sm  btn-radius" (click)="getUsersSearch(1)"
+                            style="background-color:#F86F15; color: white;">
+                            Search
+                            <i class="fa fa-spinner fa-spin" style="font-size:15px;" *ngIf="loadingUsersSearch"></i>
+                        </button>&nbsp;
+                        <button type="button" class="btn btn-secondary waves-effect btn-radius btn-sm"
+                            (click)="resetUsers(1)">
+                            Reset
+                            <i class="fa fa-spinner fa-spin" style="font-size:15px;" *ngIf="loadingResetUers"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- list of users  -->
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body text-center">
+
+                <div class="row" style="text-align: left;margin-bottom: 12px;">
+                    <div class="col-lg-12 col-md-12">
+                        <label>User list &nbsp;({{users?.length}})</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <table class="table table-hover " style="width: 100%">
+                            <thead>
+                                <tr style="text-align: center">
+                                    <th style="min-width:80px">Display name </th>
+                                    <th style="min-width: 159px;">Email </th>
+                                    <th style="min-width: 100px;">Phone number </th>
+                                    <th style="min-width: 100px;">Created date </th>
+                                    <th style="min-width: 100px;">Status </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let user of users | paginate: config">
+                                    <td>{{user.displayName}}</td>
+                                    <td>{{user.email}}</td>
+                                    <td>{{user.phoneNumber}}</td>
+                                    <td>{{user.createdDate | date:'dd/MM/yyyy'}} </td>
+                                    <td>
+                                        <span *ngIf="user.isDeleted == false" class="badge badge-success"
+                                            style="font-size: 10px;padding: 6px">
+                                            Active
+                                        </span>
+
+                                        <span *ngIf="user.isDeleted == true" class="badge badge-inverse"
+                                            style="font-size: 10px;padding: 6px">
+                                            Deleted
+                                        </span>
+                                    </td>
+                                    <td>
+                                        &nbsp;<i class="fas fa-trash"
+                                            style="color:red ;cursor: pointer;font-size: 17px;"
+                                            (click)="openConfirmDelete(deleteTemplate, user.id)"></i>&nbsp;
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                        <div class="row" *ngIf="loadingUsers">
+                            <div class="col-xl-12">
+                                <div class="card">
+                                    <div class="card-body text-center" style="color:darkgrey">
+                                        <i class="fa fa-spinner fa-spin" style="font-size:15px;"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- show when emplty data -->
+                        <div class="row" *ngIf="users?.length == 0">
+                            <div class="col-xl-12">
+                                <div class="card">
+                                    <div class="card-body text-center" style="color:darkgrey">
+                                        No users found
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="row justify-content-center m-t-20" *ngIf="users?.length > 0">
+                    <pagination-controls class="my-pagination pagging-style" (pageChange)="getNextUser($event)"
+                        directionLinks="true" autoHide="false" responsive="true" previousLabel="Previous"
+                        nextLabel="Next" screenReaderPaginationLabel="Pagination" screenReaderPageLabel="page"
+                        screenReaderCurrentLabel="You're on page">
+                    </pagination-controls>
+                    <div class="loading-pagging" *ngIf="loadingPaggingData">
+                        <i class="fa fa-spinner fa-spin" style="font-size:15px;color:#1e3020;"></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- =========== Modals ============================================================== -->
+<!-- Confirm delete -->
+<ng-template #deleteTemplate>
+    <div class="modal-body text-center">
+        <p>Are you sure delete? </p>
+        <button type="button" class="btn btn-radius btn-sm " (click)="deleteUser()"
+            style="background-color: #F86F15; color: white;">Okay
+            <i class="fa fa-spinner fa-spin" style="font-size:14px;" *ngIf="loadingDelete"></i></button> &nbsp;
+        <button type="button" class="btn btn-secondary waves-effect btn-radius btn-sm"
+            (click)="closeModal()">Cancel</button>
+    </div>
+</ng-template>

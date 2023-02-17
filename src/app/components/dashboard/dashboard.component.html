@@ -1,0 +1,146 @@
+<div id="wrapper" class="animated fadeIn">
+    <div id="wrapper">
+        <div style="background-color: #e95420;" class="topbar">
+            <!-- LOGO -->
+            <div class="topbar-left">
+                <div class="text-center">
+                    <a class="logo">
+                        <span style="font-size: 18px;">
+                           
+
+                            <!-- <img src="../assets/images/Logo.jfif" alt="logo"  -->
+                            <img src="../../../assets/images/logo.png" class="img-responsive" style="width: 55px;height: 50px;">
+                            <!-- {{appName}} -->
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Button mobile view to collapse sidebar menu -->
+            <div class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="">
+
+                        <div class="float-left">
+                            <button class="button-menu-mobile open-left waves-effect waves-light">
+                                <i class="zmdi zmdi-menu"></i>
+                            </button>
+                        </div>
+
+                        <ul class="nav navbar-right float-right">
+                            <!-- Notification bar -->
+                            <li class="list-inline-item">
+
+                            </li>
+
+                            <li class="dropdown user-box list-inline-item">
+                                <a href="#" style="font-size:15px;color:white"
+                                    class="dropdown-toggle waves-effect waves-light profile" data-toggle="dropdown"
+                                    aria-expanded="true">
+                                    [&nbsp;{{displayName}}&nbsp;]
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li><a [routerLink]="['/my-profile']" class="dropdown-item"><i
+                                                class="ti-settings m-r-5"></i>
+                                           My profile
+                                        </a></li>
+                                    <li><a href="javascript:void(0)" (click)="logout()" class="dropdown-item"><i
+                                                class="ti-power-off m-r-5"></i>
+                                            Logout
+                                        </a></li>
+                                </ul>
+                            </li>
+                        </ul>                   
+
+                    </div>
+                                  
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== Left Sidebar menues ========== -->
+        <div class="left side-menu">
+            <div class="sidebar-inner slimscrollleft" >
+                <div id="sidebar-menu" style="font-size: 14px">
+
+                    <ul>
+                   
+                        <li class="text-muted menu-title"></li>
+
+                        <li>
+                            <a routerLink="/categories" routerLinkActive="active" class="waves-effect">
+                                <i class="zmdi zmdi-view-dashboard" > &nbsp;
+                                    <span style="font-size: 17px">
+                                        Category
+                                    </span>
+                                </i>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a routerLink="/products" routerLinkActive="active" class="waves-effect">
+                                <i class="zmdi zmdi-view-dashboard" > &nbsp;
+                                    <span style="font-size: 17px">
+                                        Product
+                                    </span>
+                                </i>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a routerLink="/orders" routerLinkActive="active" class="waves-effect">
+                                <i class="zmdi zmdi-view-dashboard" > &nbsp;
+                                    <span style="font-size: 17px">
+                                        Orders
+                                    </span>
+                                </i>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a routerLink="/users" routerLinkActive="active" class="waves-effect">
+                                <i class="zmdi zmdi-view-dashboard" > &nbsp;
+                                    <span style="font-size: 17px">
+                                        Users
+                                    </span>
+                                </i>
+                            </a>
+                        </li>
+
+                        <li>
+                            <hr>
+                            <a (click)="logout()" style="margin-left:25px">
+                                <i class="zmdi" > &nbsp;
+                                    <span style="font-size: 17px">
+                                        Logout
+                                    </span>
+                                </i>
+                            </a>
+                        </li>
+
+
+                    </ul>
+
+                    <div class="clearfix"></div>
+                </div>
+                <div class="clearfix"></div>
+
+            </div>
+        </div>
+
+
+        <!-- Start Content here -->
+        <div class="content-page">
+            <!-- Start content -->
+            <div class="content">
+                <div class="container-fluid">
+                    <!-- <div class="container"> -->
+                    <router-outlet></router-outlet>
+                    <!-- </div> -->
+
+                </div>
+            </div>
+        </div>
+
+    </div><!-- END wrapper -->
+</div>

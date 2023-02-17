@@ -1,0 +1,28 @@
+/* .btn-custom{
+    background-color:green;
+    color:white;
+    font-weight:bold;
+    font-size: 16px;
+}
+
+.btn-radius{
+    border-radius: 10px;
+} */
+
+/* .ng-select.custom ::ng-deep .ng-select-container  {
+  padding-right: 10px;
+} */
+
+/* .ng-select.custom ::ng-deep .ng-select-container  {
+  padding-right: 20px;
+  
+} */
+
+/* .ng-select .ng-select-container .ng-value-container .ng-input>input
+{
+  
+} */
+
+.ng-select-container{
+    padding-left: 2px !important;
+  }

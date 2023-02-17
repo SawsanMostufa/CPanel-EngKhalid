@@ -1,0 +1,46 @@
+.card-body{
+  border-radius: 15px;
+  -webkit-box-shadow: 0 30px 70px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 30px 70px 0 rgba(0,0,0,0.3);
+}
+
+.form-container {
+  display:block;
+  width:90%;
+  padding:2em;
+  margin: 2em auto;
+  background:#fff;
+}
+
+.alert {
+  padding: 7px;
+  font-size: .9em;
+  margin-bottom: 5px;
+  display: inline-block;
+  animation: 1s alertAnim forwards;
+}
+
+.button {
+  margin-top: 3rem;
+}
+
+
+h1 {
+  margin-bottom: 2rem;
+  font-weight:bold;
+  font-family:'Muli';
+  font-size: 2em;
+}
+
+
+@keyframes alertAnim {
+  from {
+      opacity:0;
+      transform: translateY(-20px);
+  }
+  to {
+      opacity:1;
+      transform: translateY(0);
+  }
+}
+

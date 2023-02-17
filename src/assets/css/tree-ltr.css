@@ -1,0 +1,27 @@
+
+.node-content-wrapper{
+    margin-left: 3px !important;
+  }
+  
+   .tree-children {  
+      margin-left: 20px !important;
+  }
+  
+  .tree-node-level-1 > tree-node-wrapper > .node-wrapper > .node-content-wrapper::before {
+    display: none !important;
+    height: 100% !important;
+  }
+  
+  .tree-node-leaf > .node-wrapper > .node-content-wrapper::before {
+    height: 100% !important;
+    width: 25px !important;  
+  }
+  
+  .tree-children::after {
+    height: 100% !important;
+    top: -15px !important;
+  }
+  
+  tree-node:last-child > .tree-node > .tree-children::after {
+    border-right: none !important;
+  }

@@ -1,0 +1,78 @@
+<div class="animated fadeIn">
+  <div class="login100-form-avatar">
+    <img src="../../../assets/images/logo.jpeg" style="width: 360px;height: 100px;">
+  </div>
+
+  <div class="wrapper-page">
+    <div class="m-t-30 card card-body">
+      <div class="text-center">
+
+        <h4 class="text-uppercase font-bold">Login</h4>
+      </div>
+      <div class="p-2">
+
+        <form [formGroup]="loginForm" (ngSubmit)="login(loginForm.value)" class="form-horizontal m-t-10">
+
+          <div class="form-group "
+            [ngClass]="{'has-error': (loginForm.get('email').touched || loginForm.get('email').dirty) && !loginForm.get('email').valid }">
+            <div class="col-12">
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fa fa-user"></i></span>
+                </div>
+                <input class="form-control" formControlName="email" id="email" type="text" autocomplete="off"
+                  name="email" placeholder="Email / username" />
+              </div>
+
+              <div style="margin-top:5px;margin-bottom:-5px;color:red;" class="alert"
+                *ngIf="!loginForm.get('email').valid && loginForm.get('email').touched">
+                <div *ngIf="loginForm.get('email').errors?.required" style="font-size: 13px">
+                  Username is required
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="form-group"
+            [ngClass]="{'has-error': (loginForm.get('password').touched || loginForm.get('password').dirty) && !loginForm.get('password').valid }">
+            <div class="col-12">
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fa fa-key"></i></span>
+                </div>
+                <input class="form-control" formControlName="password" id="password" type="password" autocomplete="off"
+                  placeholder="Password" name="password" placeholder="Password">
+              </div>
+              <div style="margin-top:5px;color:red;margin-bottom:-5px" class="alert" *ngIf="(loginForm.get('password').touched ||
+                        loginForm.get('password').dirty) &&
+                        loginForm.get('password').errors">
+                <div *ngIf="loginForm.get('password').errors?.required" style="font-size: 13px">
+                  Password is required
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group text-center m-t-30">
+            <div class="col-12">
+              <button [disabled]="!loginForm.valid" type="submit" class="btn btn-block btn-radius "
+                style="font-size:15px; background-color: #F86F15; color: white;">
+                &nbsp; Login
+                &nbsp;<i class="fa fa-spinner fa-spin" style="font-size:17px;" *ngIf="loading"></i>
+              </button>
+            </div>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+    <!-- end card-box -->
+
+  </div>
+
+
+</div>

@@ -1,0 +1,191 @@
+<div class="row" style="margin-bottom: 7px;margin-top: -8px">
+    <div class="col-sm-12  m-t-10">
+        <div class="btn-group float-right m-b-10">
+            <button class="btn btn-block btn-radius  m-b-5" style="background-color: #F86F15; color: white;"
+                (click)="showModal(newCatModal)">
+                Add</button>
+        </div>
+        <h4 class="page-title" style="font-size: 18px;padding-right: 5px; ">Manage categories</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body text-center">
+
+                <!-- search -->
+                <div class="row" style="text-align: left;">
+                    <div class="col-lg-4 col-md-4">
+                        <label>Search</label>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-lg-4 col-md-4" style="margin-bottom: 15px;">
+                        <input class="form-control input-sm" type="text" placeholder="Category name"
+                            [(ngModel)]="commonSearchModel.searchText">
+                    </div>
+                    <div class="col-lg-4 col-md-4" style="margin-bottom: 15px; text-align: left;">
+                        <button type="button" class="btn btn-sm  btn-radius" (click)="getCategoriesSearch(1)"
+                            style="background-color:#F86F15; color: white;">
+                            Search
+                            <i class="fa fa-spinner fa-spin" style="font-size:15px;" *ngIf="loadingCategorySearch"></i>
+                        </button>&nbsp;
+                        <button type="button" class="btn btn-secondary waves-effect btn-radius btn-sm"
+                            (click)="resetCategories(1)">
+                            Reset
+                            <i class="fa fa-spinner fa-spin" style="font-size:15px;" *ngIf="loadingResetCategory"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- list of categories  -->
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body text-center">
+
+                <div class="row" style="text-align: left;margin-bottom: 12px;">
+                    <div class="col-lg-12 col-md-12">
+                        <label>Category list &nbsp;({{categories?.data.length}})</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <table class="table table-hover " style="width: 100%">
+                            <thead>
+                                <tr style="text-align: center">
+                                    <th style="min-width:80px">Id </th>
+                                    <th style="min-width: 293px;">Category name </th>
+                                    <th style="min-width: 100px;"> </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let cat of categories?.data | paginate: config">
+                                    <td>{{cat.id}}</td>
+                                    <td>{{cat.name}}</td>
+                                    <td>
+
+                                        &nbsp;<i class="fas fa-edit" style="cursor: pointer;font-size: 17px;"
+                                            (click)="getCategoryForEdit(cat.id, newCatModal)"></i>&nbsp;
+                                        &nbsp;
+
+                                        &nbsp;<i class="fas fa-trash"
+                                            style="color:red ;cursor: pointer;font-size: 17px;"
+                                            (click)="openConfirmDelete(deleteTemplate, cat.id)"></i>&nbsp;
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                        <div class="row" *ngIf="loadingCategories">
+                            <div class="col-xl-12">
+                                <div class="card">
+                                    <div class="card-body text-center" style="color:darkgrey">
+                                        <i class="fa fa-spinner fa-spin" style="font-size:15px;"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- show when emplty data -->
+                        <div class="row" *ngIf="categories?.data.length == 0">
+                            <div class="col-xl-12">
+                                <div class="card">
+                                    <div class="card-body text-center" style="color:darkgrey">
+                                        No categories found
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row justify-content-center m-t-20" *ngIf="categories?.data.length > 0">
+                    <pagination-controls class="my-pagination pagging-style" (pageChange)="getNextCategory($event)"
+                        directionLinks="true" autoHide="false" responsive="true" previousLabel="Previous"
+                        nextLabel="Next" screenReaderPaginationLabel="Pagination" screenReaderPageLabel="page"
+                        screenReaderCurrentLabel="You're on page">
+                    </pagination-controls>
+                    <div class="loading-pagging" *ngIf="loadingPaggingData">
+                        <i class="fa fa-spinner fa-spin" style="font-size:15px;color:#1e3020;"></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- =========== Modals ============================================================== -->
+<!-- new category -->
+<ng-template #newCatModal>
+
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <form [formGroup]="categoryForm" id="categoryForm" (ngSubmit)="onSubmitCategory(categoryForm.value)">
+        <div class="modal-body custom-modal">
+
+            <div class="row">
+                <div class="col-12 p-10">
+                    <input type="hidden" formControlName="id">
+
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 form-group" [ngClass]="{'has-error': (categoryForm.get('name').touched || categoryForm.get('name').dirty) 
+                                        && !categoryForm.get('name').valid }">
+                            <label class="control-label">Category name
+                            </label>&nbsp;<span style="color:red;font-size: 18px;font-weight: bold">*</span>
+                            <input class="form-control input-sm" formControlName="name" type="text"
+                                placeholder="Category name">
+                            <div style="margin-top:6px;margin-bottom:-15px;color:red;font-weight: bold" class="alert"
+                                *ngIf="!categoryForm.get('name').valid && categoryForm.get('name').touched">
+                                <div *ngIf="categoryForm.get('name').errors?.required">
+                                    Name is required
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-radius btn-sm btn-bgcolor" type="submit" [disabled]="!categoryForm.valid">
+                &nbsp; {{buttonTitle}}
+                &nbsp; <i class="fa fa-spinner fa-spin" style="font-size:15px;" *ngIf="showAddloading"></i>
+            </button>
+            <button type="button" class="btn btn-secondary waves-effect btn-radius btn-sm" (click)="closeModal()"
+                data-dismiss="modal">Cancel
+            </button>
+        </div>
+    </form>
+
+</ng-template>
+
+<!-- Confirm delete -->
+<ng-template #deleteTemplate>
+    <div class="modal-body text-center">
+        <p> If the category is deleted, all products associated with it will be deleted ... do you want to continue?
+        </p>
+        <button type="button" class="btn btn-radius btn-sm btn-bgcolor" (click)="deleteCategory()">Okay
+            <i class="fa fa-spinner fa-spin" style="font-size:14px;" *ngIf="loadingDelete"></i></button> &nbsp;
+        <button type="button" class="btn btn-secondary waves-effect btn-radius btn-sm"
+            (click)="closeModal()">Cancel</button>
+    </div>
+</ng-template>

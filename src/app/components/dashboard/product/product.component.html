@@ -1,0 +1,412 @@
+<div class="row" style="margin-bottom: 7px;margin-top: -8px">
+    <div class="col-sm-12  m-t-10">
+        <div class="btn-group float-right m-b-10">
+            <button class="btn btn-block btn-radius  m-b-5" (click)="showModal(newProductModal)"
+                style="background-color: #F86F15; color: white;">
+                Add</button>
+        </div>
+        <h4 class="page-title" style="font-size: 18px;padding-right: 5px; ">Manage products</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body text-center">
+
+                <!-- search -->
+                <div class="row" style="text-align: left;">
+                    <div class="col-lg-4 col-md-4">
+                        <label>Search</label>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-lg-4 col-md-4" style="margin-bottom: 15px;">
+                        <input class="form-control input-sm" type="text" placeholder="Product name"
+                            [(ngModel)]="commonSearchModel.searchText">
+                    </div>
+                    <div class="col-lg-4 col-md-4" style="margin-bottom: 15px; text-align: left;">
+                        <button type="button" class="btn btn-sm  btn-radius" (click)="getProductSearch(1)"
+                            style="background-color: #F86F15; color: white;">
+                            Search
+                            <i class="fa fa-spinner fa-spin" style="font-size:15px;" *ngIf="loadingProductSearch"></i>
+                        </button>&nbsp;
+                        <button type="button" class="btn btn-secondary waves-effect btn-radius btn-sm"
+                            (click)="resetProduct(1)">
+                            Reset
+                            <i class="fa fa-spinner fa-spin" style="font-size:15px;" *ngIf="loadingResetProduct"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- list of products  -->
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body text-center">
+
+                <div class="row" style="text-align: left">
+                    <div class="col-lg-12 col-md-12">
+                        <label>Product list &nbsp;({{products?.length}})</label>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:30px;">
+                    <div class="col-12">
+                        <table class="table table-hover " style="width: 100%">
+                            <thead>
+                                <tr style="text-align: center">
+                                    <th style="min-width:80px">Image </th>
+                                    <th style="min-width: 210px;">Name </th>
+                                    <th style="min-width: 80px;">Category </th>
+                                    <th style="min-width: 80px;">Quantity </th>
+                                    <th style="min-width: 80px;">Sizes </th>
+                                    <th style="min-width: 80px;">Price After Discount</th>
+                                    <th style="min-width: 60px;">Price Befor Discount </th>
+                                    <th> </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="text-align: center" *ngFor="let product of products | paginate: config">
+                                    <td><img src="{{imageUrl + product.pictureUrl}}"
+                                            style="width:70px;height:50px;border:1px solid" class="img-responsive"></td>
+                                    <td>{{product.name}}</td>
+                                    <td>{{product.category}}</td>
+                                    <td>
+                                        <div *ngFor="let productsize of product.productSizes">
+                                            {{productsize.quantity}}
+                                        </div>
+                                    <td>
+                                        <div *ngFor="let productsize of product.productSizes">
+                                            {{productsize.value}}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div *ngFor="let productsize of product.productSizes">
+                                            {{productsize.price | currency:"AED"}}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div *ngFor="let productsize of product.productSizes">
+                                            {{productsize.discount | currency:"AED"}}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <i class="fas fa-info-circle"
+                                            style="color:rgb(100, 82, 200) ;cursor: pointer;font-size: 17px;"
+                                            (click)="getProductDetails(product.id, productDetailsModal)"></i>
+                                        &nbsp;
+                                        &nbsp;&nbsp;<i class="fas fa-edit" style="cursor: pointer;font-size: 17px;"
+                                            (click)="getProductForEdit(product.id, newProductModal)"></i>
+                                        &nbsp;&nbsp;
+
+                                        <i class="fas fa-trash" style="color:red ;cursor: pointer;font-size: 17px;"
+                                            (click)="openConfirmDelete(deleteTemplate, product.id)"></i>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                        <div class="row" *ngIf="loadingProducts">
+                            <div class="col-xl-12">
+                                <div class="card">
+                                    <div class="card-body text-center" style="color:darkgrey">
+                                        <i class="fa fa-spinner fa-spin" style="font-size:15px;"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- show when emplty data -->
+                        <div class="row" *ngIf="products?.length == 0">
+                            <div class="col-xl-12">
+                                <div class="card">
+                                    <div class="card-body text-center" style="color:darkgrey">
+                                        No products found
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="row justify-content-center m-t-20" *ngIf="products?.length > 0">
+                    <pagination-controls class="my-pagination pagging-style" (pageChange)="getNextProduct($event)"
+                        directionLinks="true" autoHide="false" responsive="true" previousLabel="Previous"
+                        nextLabel="Next" screenReaderPaginationLabel="Pagination" screenReaderPageLabel="page"
+                        screenReaderCurrentLabel="You're on page">
+                    </pagination-controls>
+                    <div class="loading-pagging" *ngIf="loadingPaggingData">
+                        <i class="fa fa-spinner fa-spin" style="font-size:15px;color:#1e3020;"></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- =========== Modals ============================================================== -->
+<!-- Confirm delete -->
+<ng-template #deleteTemplate>
+    <div class="modal-body text-center">
+        <p>Are you sure delete? </p>
+        <button type="button" class="btn btn-radius btn-sm btn-bgcolor" (click)="deleteProduct()">Okay
+            <i class="fa fa-spinner fa-spin" style="font-size:14px;" *ngIf="loadingDelete"></i></button> &nbsp;
+        <button type="button" class="btn btn-secondary waves-effect btn-radius btn-sm"
+            (click)="closeModal()">Cancel</button>
+    </div>
+</ng-template>
+
+
+<!-- products details -->
+<ng-template #productDetailsModal>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Product details </h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body custom-modal">
+
+        <div class="row">
+            <div class="col-8">
+                <div class="col-lg-6 col-md-4" style="margin-bottom: 10px;">
+                    <label>Name : &nbsp;</label> {{productDetails?.name}}
+                </div>
+                <div class="col-lg-6 col-md-4" style="margin-bottom: 10px;">
+                    <label>Category : &nbsp;</label> {{productDetails?.category}}
+                </div>
+                <div class="col-lg-6 col-md-4" *ngFor="let productdetails of productDetails.productSizes"
+                    style="margin-bottom: 10px; text-align: left;">
+                    <label>Quantity : &nbsp;</label> {{productdetails?.quantity}}
+                </div>
+                <div class="col-lg-6 col-md-4" *ngFor="let productdetails of productDetails.productSizes"
+                    style="margin-bottom: 10px; text-align: left;">
+                    <label>Price : &nbsp;</label> {{productdetails?.price | currency:"AED"}}
+                </div>
+                <div class="col-lg-6 col-md-4" *ngFor="let productdetails of productDetails.productSizes"
+                    style="margin-bottom: 10px; text-align: left;">
+                    <label>Discount : &nbsp;</label> {{productdetails?.discount | currency:"AED"}}
+                </div>
+            </div>
+
+            <div class="col-4">
+                <img src="{{imageUrl + productDetails?.pictureUrl}}" style="width:170px;height:150px;border:1px solid"
+                    class="img-responsive">
+            </div>
+            <div class="col-4">
+                <label>Sizes : &nbsp;</label>
+                <span *ngFor="let productSize of productDetails.productSizes">
+                    {{productSize.value}} &nbsp;
+                </span>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-12" style="margin-bottom: 10px; text-align: left;">
+                <label>Description : &nbsp;</label> {{productDetails?.description}}
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect btn-radius btn-sm" (click)="closeModal()">
+            Close
+            &nbsp;<span class="fa fa-times"></span>
+        </button>
+    </div>
+</ng-template>
+
+
+<ng-template #newProductModal>
+
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">{{modalTitle}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <form [formGroup]="productForm" id="productForm" (ngSubmit)="onSubmit(productForm.value)">
+        <div class="modal-body custom-modal">
+
+            <div class="row">
+                <div class="col-12 p-10">
+                    <input type="hidden" formControlName="id">
+
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 form-group" [ngClass]="{'has-error': (productForm.get('name').touched || productForm.get('name').dirty)
+                                 && !productForm.get('name').valid }">
+                            <label class="control-label">Product name</label>
+                            &nbsp;<span style="color:red;font-weight: bold">*</span>
+                            <input class="form-control input-sm" formControlName="name" type="text"
+                                placeholder="Product name">
+
+                            <div style="margin-top:6px;margin-bottom:-15px;color:red;font-weight: bold" class="alert"
+                                *ngIf="!productForm.get('name').valid && productForm.get('name').touched">
+                                <div *ngIf="productForm.get('name').errors?.required">
+                                    Product name is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 form-group" [ngClass]="{'has-error': (productForm.get('categoryId').touched 
+                            || productForm.get('categoryId').dirty)
+                            && !productForm.get('categoryId').valid }">
+                            <label class="control-label" for="categoryId">Category</label>
+                            &nbsp;<span style="color:red;font-weight: bold">*</span>
+
+                            <ng-select formControlName="categoryId" placeholder="--- Select category ---">
+                                <ng-option *ngFor="let cat of categoryList" [value]="cat.id">
+                                    <span>{{cat.name}}</span>
+                                </ng-option>
+                            </ng-select>
+                            <div style="margin-top:6px;margin-bottom:-15px;color:red;font-weight: bold" class="alert"
+                                *ngIf="!productForm.get('categoryId').valid 
+                                    && (productForm.get('categoryId').touched
+                                    || productForm.get('categoryId').dirty)">
+                                <div *ngIf="productForm.get('categoryId').hasError('required')">
+                                    Select category
+                                </div>
+                                <div *ngIf="productForm.get('categoryId').errors?.min">
+                                    Select category
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                    <!--Product sizes-->
+
+                    <div formArrayName="productSizes">
+                        <div appearance="outline" class="mb-3 ms-3"
+                            *ngFor="let item of productSizes.controls let i=index">
+                            <div [formGroup]="item">
+                                <label for="{{'size'+ i+1}}">Size No.# {{i+1}}</label>
+                                <input type="text" formControlName="value" matInput placeholder="Size">
+
+                                <div class="col-lg-6 col-md-12 form-group" [ngClass]="{'has-error': (item.get('quantity').touched || item.get('quantity').dirty)
+                                     && !item.get('quantity').valid }">
+                                    <label class="control-label">Quantity</label>
+                                    &nbsp;<span style="color:red;font-weight: bold">*</span>
+                                    <input class="form-control input-sm" formControlName="quantity" type="number"
+                                        placeholder="Quantity" (keypress)="checkMobilNumber($event)">
+
+                                    <div style="margin-top:6px;margin-bottom:-15px;color:red;font-weight: bold"
+                                        class="alert"
+                                        *ngIf="!item.get('quantity').valid && item.get('quantity').touched">
+                                        <div *ngIf="item.get('quantity').errors?.required">
+                                            quantity is required
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-md-12 form-group" [ngClass]="{'has-error': (item.get('discount').touched || item.get('discount').dirty)
+                                && !item.get('discount').valid }">
+                                    <label class="control-label">Price Befor Discount</label>
+                                    &nbsp;<span style="color:red;font-weight: bold">*</span>
+                                    <input class="form-control input-sm" formControlName="discount" type="number"
+                                        placeholder="Discount" (keypress)="checkMobilNumber($event)">
+
+                                    <div style="margin-top:6px;margin-bottom:-15px;color:red;font-weight: bold"
+                                        class="alert"
+                                        *ngIf="!item.get('discount').valid && item.get('discount').touched">
+                                        <div *ngIf="item.get('discount').errors?.required">
+                                            Discount is required
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-md-12 form-group" [ngClass]="{'has-error': (item.get('price').touched || item.get('price').dirty)
+                              && !item.get('price').valid }">
+                                    <label class="control-label">Price After Discount</label>
+                                    &nbsp;<span style="color:red;font-weight: bold">*</span>
+                                    <input class="form-control input-sm" formControlName="price" type="number"
+                                        placeholder="Price" (keypress)="checkMobilNumber($event)">
+
+                                    <div style="margin-top:6px;margin-bottom:-15px;color:red;font-weight: bold"
+                                        class="alert" *ngIf="!item.get('price').valid && item.get('price').touched">
+                                        <div *ngIf="item.get('price').errors?.required">
+                                            Price is required
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary" (click)="addSize($event)">+</button>
+
+                    </div>
+
+                    <!--End Product sizes-->
+
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 form-group">
+                            <label class="control-label">Description</label>
+                            <textarea class="form-control" formControlName="description"
+                                placeholder="Description"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- image -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 form-group">
+                            <label class="control-label">Image</label>
+                            &nbsp;<span style="color:red;font-weight: bold">*</span><br>
+                            <img src="{{imageName == ''?  imageUrl + defImage : imageUrl + imageName}}"
+                                style="width:210px;height:170px;">
+                            <input type="file" style="padding-top: 15px" id="ImageFile" name="ImageFile"
+                                class="form-control-file" accept="image/*"
+                                (change)="uploadProductImage($event.target.files)" />
+
+
+                            <div style="text-align: center;margin-top: 3px">
+                                <i class="fa fa-spinner fa-spin" style="font-size:20px;color:#a1a234;"
+                                    *ngIf="loadingProductImage"></i>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-md-12 form-group" *ngIf="imageName == '' || imageName == null">
+                            <div style="margin-top:0px;margin-bottom:-15px;color:red;font-weight: bold" class="alert">
+                                Product image is required
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <div class="modal-footer">
+            <button class="btn btn-radius btn-sm btn-bgcolor" type="submit" [disabled]="!productForm.valid">
+                {{buttonTitle}}<i class="fa fa-spinner fa-spin" style="font-size:15px;" *ngIf="showAddloading"></i>
+            </button>
+            <button type="button" class="btn btn-secondary waves-effect btn-radius btn-sm" (click)="closeModal()">Cancel
+            </button>
+        </div>
+    </form>
+
+</ng-template>

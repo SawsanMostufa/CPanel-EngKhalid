@@ -1,0 +1,208 @@
+<div class="row" style="margin-bottom: 7px;margin-top: -8px">
+    <div class="col-sm-12  m-t-10">
+        <h4 class="page-title" style="font-size: 18px;padding-right: 5px; ">Manage orders</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body text-center">
+
+                <!-- search -->
+                <div class="row" style="text-align: left;">
+                    <div class="col-lg-4 col-md-4">
+                        <label>Search</label>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-lg-4 col-md-4" style="margin-bottom: 15px;">
+                        <input class="form-control input-sm" type="text" placeholder="Date from" bsDatepicker
+                            [bsConfig]="bsConfig" (keypress)="checkMobilNumber($event)"
+                            [(ngModel)]="searchModel.dateFrom">
+                    </div>
+                    <div class="col-lg-4 col-md-4" style="margin-bottom: 15px;">
+                        <input class="form-control input-sm" type="text" placeholder="Date to" bsDatepicker
+                            [bsConfig]="bsConfig" (keypress)="checkMobilNumber($event)"
+                            [(ngModel)]="searchModel.dateTo">
+                    </div>
+                    <div class="col-lg-4 col-md-4" style="margin-bottom: 15px; text-align: left;">
+                        <button type="button" class="btn btn-sm btn-bgcolor btn-radius" (click)="getOrdersSearch(1)"
+                            style="background-color: #F86F15; color: white;">
+                            Search
+                            <i class="fa fa-spinner fa-spin" style="font-size:15px;" *ngIf="loadingSearch"></i>
+                        </button>&nbsp;
+                        <button type="button" class="btn btn-secondary waves-effect btn-radius btn-sm"
+                            (click)="resetOrders(1)">
+                            Reset
+                            <i class="fa fa-spinner fa-spin" style="font-size:15px;" *ngIf="loadingResetOrders"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body text-center">
+
+                <div class="row" style="text-align: left;">
+                    <div class="col-lg-4 col-md-4">
+                        <label>Order list &nbsp;({{orders?.data.length}})</label>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <div class="col-12">
+                        <table class="table table-hover " style="width: 100%">
+                            <thead>
+                                <tr style="text-align: center">
+                                    <th style="min-width:80px">Id </th>
+                                    <th style="min-width: 159px;">User name </th>
+                                    <th style="min-width: 100px;">Order date </th>
+                                    <th style="min-width: 100px;">Total amount </th>
+                                    <th style="min-width: 100px;"> </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let order of orders?.data | paginate: config">
+                                    <td>{{order.id}}</td>
+                                    <td>{{order.username}}</td>
+                                    <td>{{order.orderDate | date:'dd/MM/yyyy'}} </td>
+                                    <td>{{order.totalAmount | currency:"AED"}}</td>
+
+                                    <td>
+                                        <a style="font-size:14px;cursor: pointer; border-radius: 2rem;"
+                                            class="btn btn-secondary text-white rounded-Pill"
+                                            (click)="getOrderItems(order.id, orderItemsModal)">Details
+                                            <i class="fa fa-spinner fa-spin" style="font-size:12px;color:black"
+                                                *ngIf="loadOrderItems == order.id"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                        <div class="row" *ngIf="loadingOrders">
+                            <div class="col-xl-12">
+                                <div class="card">
+                                    <div class="card-body text-center" style="color:darkgrey">
+                                        <i class="fa fa-spinner fa-spin" style="font-size:15px;"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- show when emplty data -->
+                        <div class="row" *ngIf="orders?.data.length == 0">
+                            <div class="col-xl-12">
+                                <div class="card">
+                                    <div class="card-body text-center" style="color:darkgrey">
+                                        No orders found
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="row justify-content-center m-t-20" *ngIf="orders?.data.length > 0">
+                    <pagination-controls class="my-pagination pagging-style" (pageChange)="getNextOrder($event)"
+                        directionLinks="true" autoHide="false" responsive="true" previousLabel="Previous"
+                        nextLabel="Next" screenReaderPaginationLabel="Pagination" screenReaderPageLabel="page"
+                        screenReaderCurrentLabel="You're on page">
+                    </pagination-controls>
+                    <div class="loading-pagging" *ngIf="loadingPaggingData">
+                        <i class="fa fa-spinner fa-spin" style="font-size:15px;color:#1e3020;"></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- order items -->
+<ng-template #orderItemsModal>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Order item({{orderDetails?.orderItems.length}}) </h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body custom-modal">
+
+        <div class="row">
+            <div class="col-lg-6 col-md-4" style="margin-bottom: 10px;">
+                <label>Order Id : &nbsp;</label> {{orderDetails?.id}}
+            </div>
+            <div class="col-lg-6 col-md-4" style="margin-bottom: 10px;">
+                <label>Order date : &nbsp;</label> {{orderDetails?.orderDate | date:'dd/MM/yyyy'}}
+            </div>
+            <div class="col-lg-6 col-md-4" style="margin-bottom: 10px; text-align: left;">
+                <label>User name : &nbsp;</label> {{orderDetails?.username}}
+            </div>
+            <div class="col-lg-6 col-md-4" style="margin-bottom: 10px; text-align: left;">
+                <label>Total amount : &nbsp;</label> {{orderDetails?.totalAmount | currency:"AED"}}
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:30px;">
+            <div class="col-12">
+                <table class="table table-hover " style="width: 100%">
+                    <thead>
+                        <tr style="text-align: center">
+                            <th style="min-width:80px">Product image </th>
+                            <th style="min-width: 100px;">Product name </th>
+                            <th style="min-width: 60px;">Price </th>
+                            <th style="min-width: 50px;">Quantity </th>
+                            <th style="min-width: 70px;">Total </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="text-align: center" *ngFor="let orderItem of orderDetails?.orderItems">
+                            <td><img src="{{imageUrl + orderItem.pictureUrl}}"
+                                    style="width:70px;height:50px;border:1px solid" class="img-responsive"></td>
+                            <td>{{orderItem.productName}}</td>
+                            <td>{{orderItem.price}}</td>
+                            <td>{{orderItem.quantity}}</td>
+                            <td>{{orderItem.total | currency:"AED"}}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <!-- show when emplty data -->
+                <div class="row" *ngIf="orders?.data.length == 0">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-body text-center" style="color:darkgrey">
+                                No orders found
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect btn-radius btn-sm" (click)="closeModal()">
+            Close
+            &nbsp;<span class="fa fa-times"></span>
+        </button>
+    </div>
+</ng-template>
